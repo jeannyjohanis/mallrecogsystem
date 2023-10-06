@@ -15,8 +15,8 @@ from tkinter import messagebox
 
 def resize():
     #myImage and myImage_new dir change accordingly
-    myImage = "ModifiedPhoto"
-    myImage_new = "image_new"
+    myImage = "ModifiedPhoto_full//"
+    myImage_new = "image_new_full/"
 
     #count files with jpg extension
     image_count = len([f for f in os.listdir(myImage) if f.endswith(".jpg")])
@@ -26,14 +26,14 @@ def resize():
     count = 0
     for i in range(3):
         for j in range(int(image_count/3)):
-            image = PIL.Image.open(myImage + '\\' + str(i+1) + '_' + str(j+1) +'.jpg')
-            image = image.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+            image = PIL.Image.open(myImage + str(i+1) + '_' + str(j+1) +'.jpg')
+            image = image.resize((basewidth, hsize), PIL.Image.LANCZOS)
             image = image.convert("L")
-            image.save(myImage_new + '\\' + str(i+1) + '_' + str(j+1) +'.jpg')
+            image.save(myImage_new + str(i+1) + '_' + str(j+1) +'.jpg')
 
 def toMatrix():
     from PIL import Image
-    myImage_new = "image_new"
+    myImage_new = "image_new/"
     #count files with jpg extension
     image_count = len([f for f in os.listdir(myImage_new) if f.endswith(".jpg")])
     #initialize empty numpy matrix
@@ -42,16 +42,16 @@ def toMatrix():
     for i in range(3):
         index=36*i
         for j in range(int(image_count/3)):
-                image = PIL.Image.open(myImage_new + '\\' + str(i+1) + '_' + str(j+1) +'.jpg')
+                image = PIL.Image.open(myImage_new + str(i+1) + '_' + str(j+1) +'.jpg')
                 data = image.getdata()
                 data = np.matrix(data)
                 matrix[index+j] = data
     #save matrix into text file
     #change dir accordingly
-    np.savetxt('image_new\\image.txt', matrix)
+    np.savetxt('image_new/image.txt', matrix)
 
 def traintestsplit():
-    X = np.loadtxt('image_new\\image.txt')
+    X = np.loadtxt('image_new/image.txt')
     y=np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
                 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  
                 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3])
@@ -137,10 +137,10 @@ def clicked1():
     basewidth = 100
     hsize = 100
     image = PIL.Image.open(filename)
-    image = image.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+    image = image.resize((basewidth, hsize), PIL.Image.LANCZOS)
     image = image.convert("L")
     data = image.getdata()
-    data1 = np.matrix(data)
+    data1 = np.asarray(data).reshape(1, -1) 
     predIm = pcaIm(X_train,data1)
     predictions=svm(X_train_pca,y_train,predIm)
 
